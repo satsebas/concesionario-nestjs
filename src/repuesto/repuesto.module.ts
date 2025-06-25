@@ -6,9 +6,8 @@ import { RepuestoController } from './repuesto.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Repuesto])],
-  controllers: [RepuestoController],
   providers: [RepuestoService],
-  exports: [RepuestoService],
+  controllers: [RepuestoController],
 })
 export class RepuestoModule {}
 

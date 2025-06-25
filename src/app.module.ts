@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { ClienteModule } from './cliente/cliente.module';
 import { CarroModule } from './carro/carro.module';
 import { RepuestoModule } from './repuesto/repuesto.module';
@@ -8,34 +9,21 @@ import { HistorialCompraModule } from './historial-compra/historial-compra.modul
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => {
-        console.log('Conectando a MySQL con:', {
-          host: config.get('DB_HOST', 'no-host'),
-          port: config.get('DB_PORT', 'no-port'),
-          user: config.get('DB_USER', 'no-user'),
-          pass: config.get('DB_PASS', 'no-pass'),
-          db:   config.get('DB_NAME', 'no-db'),
-        });
-        return {
-          type: 'mysql' as const,
-          host: config.get<string>('DB_HOST', 'localhost'),
-          port: +config.get<string>('DB_PORT', '3306'),
-          username: config.get<string>('DB_USER', 'root'),
-          password: config.get<string>('DB_PASS', ''),    // fallback a ''
-          database: config.get<string>('DB_NAME', 'concesionario'),
-          autoLoadEntities: true,
-          synchronize: true,
-        };
-      },
+      useFactory: (cs: ConfigService) => ({
+        type: 'mysql',
+        host: cs.get('DB_HOST')!,
+        port: parseInt(cs.get('DB_PORT') ?? '3306', 10),
+        username: cs.get('DB_USER')!,
+        password: cs.get('DB_PASS')!,
+        database: cs.get('DB_NAME')!,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true,
+      }),
       inject: [ConfigService],
     }),
-
     ClienteModule,
     CarroModule,
     RepuestoModule,
@@ -43,4 +31,3 @@ import { HistorialCompraModule } from './historial-compra/historial-compra.modul
   ],
 })
 export class AppModule {}
-

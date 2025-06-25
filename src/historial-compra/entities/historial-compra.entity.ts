@@ -3,31 +3,32 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
+  CreateDateColumn,
 } from 'typeorm';
 import { Cliente } from '../../cliente/entities/cliente.entity';
 import { Carro } from '../../carro/entities/carro.entity';
 import { Repuesto } from '../../repuesto/entities/repuesto.entity';
 
-@Entity()
+@Entity('historial_compras')
 export class HistorialCompra {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @CreateDateColumn()
   fecha: Date;
 
-  @ManyToOne(() => Cliente, cliente => cliente.compras, { eager: true })
+  @ManyToOne(() => Cliente, cliente => cliente.historial, { eager: true })
   cliente: Cliente;
 
-  @ManyToOne(() => Carro, carro => carro.compras, { eager: true })
+  @ManyToOne(() => Carro, carro => carro.historial, { eager: true })
   carro: Carro;
 
-  @ManyToMany(() => Repuesto, repuesto => repuesto.historiales, { eager: true })
-  @JoinTable()
-  repuestos: Repuesto[];
+  @ManyToOne(() => Repuesto, repuesto => repuesto.historial, { eager: true })
+  repuesto: Repuesto;
+
+  @Column('int')
+  cantidad: number;
+
+  @Column('decimal')
+  total: number;
 }

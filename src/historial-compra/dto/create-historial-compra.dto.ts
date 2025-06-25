@@ -1,18 +1,20 @@
-import { IsInt, IsArray, ArrayNotEmpty, ArrayUnique } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsInt, Min } from 'class-validator';
 
-export class CreateHistorialCompraDto {
+export class CreateHistorialDto {
   @IsInt()
-  @Type(() => Number)
   clienteId: number;
 
   @IsInt()
-  @Type(() => Number)
   carroId: number;
 
-  @IsArray()
-  @ArrayNotEmpty()
-  @ArrayUnique()
-  @Type(() => Number)
-  repuestosIds: number[];
+  @IsInt()
+  repuestoId: number;
+
+  @IsInt()
+  @Min(1)
+  cantidad: number;
+
+  @IsInt()
+  @Min(0)
+  total: number;
 }

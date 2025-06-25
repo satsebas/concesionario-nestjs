@@ -1,34 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { HistorialCompraService } from './historial-compra.service';
-import { CreateHistorialCompraDto } from './dto/create-historial-compra.dto';
-import { UpdateHistorialCompraDto } from './dto/update-historial-compra.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { HistorialService } from './historial-compra.service';
+import { CreateHistorialDto } from './dto/create-historial-compra.dto'
+import { UpdateHistorialDto } from './dto/update-historial-compra.dto';
 
-@Controller('historial-compra')
-export class HistorialCompraController {
-  constructor(private readonly historialCompraService: HistorialCompraService) {}
+@Controller('historial')
+export class HistorialController {
+  constructor(private readonly historialService: HistorialService) {}
 
   @Post()
-  create(@Body() createHistorialCompraDto: CreateHistorialCompraDto) {
-    return this.historialCompraService.create(createHistorialCompraDto);
+  create(@Body() dto: CreateHistorialDto) {
+    return this.historialService.create(dto);
   }
 
   @Get()
   findAll() {
-    return this.historialCompraService.findAll();
+    return this.historialService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.historialCompraService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.historialService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHistorialCompraDto: UpdateHistorialCompraDto) {
-    return this.historialCompraService.update(+id, updateHistorialCompraDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateHistorialDto,
+  ) {
+    return this.historialService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.historialCompraService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.historialService.remove(id);
   }
 }

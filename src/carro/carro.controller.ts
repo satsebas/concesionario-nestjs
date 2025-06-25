@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { CarroService } from './carro.service';
 import { CreateCarroDto } from './dto/create-carro.dto';
 import { UpdateCarroDto } from './dto/update-carro.dto';
 
-@Controller('carro')
+@Controller('carros')
 export class CarroController {
   constructor(private readonly carroService: CarroService) {}
 
   @Post()
-  create(@Body() createCarroDto: CreateCarroDto) {
-    return this.carroService.create(createCarroDto);
+  create(@Body() dto: CreateCarroDto) {
+    return this.carroService.create(dto);
   }
 
   @Get()
@@ -18,17 +27,20 @@ export class CarroController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.carroService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.carroService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCarroDto: UpdateCarroDto) {
-    return this.carroService.update(+id, updateCarroDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateCarroDto,
+  ) {
+    return this.carroService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.carroService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.carroService.remove(id);
   }
 }

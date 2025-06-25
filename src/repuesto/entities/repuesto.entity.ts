@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { HistorialCompra } from '../../historial-compra/entities/historial-compra.entity';
 
-@Entity()
+@Entity('repuestos')
 export class Repuesto {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 100 })
   nombre: string;
 
   @Column('decimal')
   precio: number;
 
-  @ManyToMany(() => HistorialCompra, historial => historial.repuestos)
-  historiales: HistorialCompra[];
+  @OneToMany(() => HistorialCompra, hc => hc.repuesto)
+  historial: HistorialCompra[];
 }

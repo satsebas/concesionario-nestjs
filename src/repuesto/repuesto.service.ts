@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Repuesto } from './entities/repuesto.entity';
 import { CreateRepuestoDto } from './dto/create-repuesto.dto';
 import { UpdateRepuestoDto } from './dto/update-repuesto.dto';
 
 @Injectable()
 export class RepuestoService {
-  create(createRepuestoDto: CreateRepuestoDto) {
-    return 'This action adds a new repuesto';
+  constructor(
+    @InjectRepository(Repuesto)
+    private readonly repuestoRepo: Repository<Repuesto>,
+  ) {}
+
+  async create(dto: CreateRepuestoDto): Promise<Repuesto> {
+    const rep = this.repuestoRepo.create(dto);
+    return this.repuestoRepo.save(rep);
   }
 
-  findAll() {
-    return `This action returns all repuesto`;
+  async findAll(): Promise<Repuesto[]> {
+    return this.repuestoRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} repuesto`;
+  async findOne(id: number): Promise<Repuesto> {
+    const rep = await this.repuestoRepo.findOneBy({ id });
+    if (!rep) throw new NotFoundException('Repuesto no encontrado');
+    return rep;
   }
 
-  update(id: number, updateRepuestoDto: UpdateRepuestoDto) {
-    return `This action updates a #${id} repuesto`;
+  async update(id: number, dto: UpdateRepuestoDto): Promise<Repuesto> {
+    await this.repuestoRepo.update(id, dto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} repuesto`;
+  async remove(id: number): Promise<void> {
+    const res = await this.repuestoRepo.delete(id);
+    if (res.affected === 0) throw new NotFoundException('Repuesto no encontrado');
   }
 }
